@@ -93,9 +93,9 @@ class AddressBookManager {
     // Find a contact by first and last name in a specific address book
     findContactByName(bookName, firstName, lastName) {
         if (this.addressBooks[bookName]) {
-            const contact = this.addressBooks[bookName].find(contact => contact.firstName === firstName && contact.lastName === lastName);
-            if (contact) {
-                return contact;
+            const contactIndex = this.addressBooks[bookName].findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
+            if (contactIndex !== -1) {
+                return contactIndex;
             } else {
                 console.error(`Contact '${firstName} ${lastName}' not found in '${bookName}'.`);
                 return null;
@@ -106,34 +106,12 @@ class AddressBookManager {
         }
     }
 
-    // Edit an existing contact's details
-    editContact(bookName, firstName, lastName, updatedDetails) {
-        const contact = this.findContactByName(bookName, firstName, lastName);
-        if (contact) {
-            try {
-                if (updatedDetails.firstName) contact.validateName(updatedDetails.firstName, "First Name");
-                if (updatedDetails.lastName) contact.validateName(updatedDetails.lastName, "Last Name");
-                if (updatedDetails.address) contact.validateAddress(updatedDetails.address, "Address");
-                if (updatedDetails.city) contact.validateAddress(updatedDetails.city, "City");
-                if (updatedDetails.state) contact.validateAddress(updatedDetails.state, "State");
-                if (updatedDetails.zip) contact.validateZip(updatedDetails.zip);
-                if (updatedDetails.phone) contact.validatePhone(updatedDetails.phone);
-                if (updatedDetails.email) contact.validateEmail(updatedDetails.email);
-
-                // Update the contact details if validation passes
-                contact.firstName = updatedDetails.firstName || contact.firstName;
-                contact.lastName = updatedDetails.lastName || contact.lastName;
-                contact.address = updatedDetails.address || contact.address;
-                contact.city = updatedDetails.city || contact.city;
-                contact.state = updatedDetails.state || contact.state;
-                contact.zip = updatedDetails.zip || contact.zip;
-                contact.phone = updatedDetails.phone || contact.phone;
-                contact.email = updatedDetails.email || contact.email;
-
-                console.log(`Contact '${firstName} ${lastName}' updated successfully in '${bookName}'.`);
-            } catch (error) {
-                console.error(`Failed to update contact: ${error.message}`);
-            }
+    // Delete a contact by name
+    deleteContact(bookName, firstName, lastName) {
+        const contactIndex = this.findContactByName(bookName, firstName, lastName);
+        if (contactIndex !== null) {
+            this.addressBooks[bookName].splice(contactIndex, 1);
+            console.log(`Contact '${firstName} ${lastName}' deleted successfully from '${bookName}'.`);
         }
     }
 
@@ -149,48 +127,30 @@ class AddressBookManager {
 }
 
 
+// Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
 
+// Create a new address book
 addressBookManager.createAddressBook("Personal");
-addressBookManager.createAddressBook("Professional");
 
-// Add 
+// Add contacts to the 'Personal' address book
 try {
-    let contact1 = new Contact("Sweety", "Ana", "123 Main St", "CityName", "State", "12345", "123-456-7890", "sweety@example.com");
+    let contact1 = new Contact("John", "Doe", "123 Main St", "CityName", "State", "12345", "123-456-7890", "john.doe@example.com");
     addressBookManager.addContactToBook("Personal", contact1);
-    
-    let contact2 = new Contact("Reshma", "Patil", "456 Elm St", "CityName", "State", "67890", "098-765-4321", "reshma@example.com");
+
+    let contact2 = new Contact("Jane", "Doe", "456 Elm St", "CityName", "State", "67890", "098-765-4321", "jane.doe@example.com");
     addressBookManager.addContactToBook("Personal", contact2);
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
-//Add
-try {
-    let contact3 = new Contact("Anna", "Bella", "789 Oak St", "BusinessCity", "BusinessState", "54321", "321-654-9870", "anna@work.com");
-    addressBookManager.addContactToBook("Professional", contact3);
-} catch (error) {
-    console.error(`Error: ${error.message}`);
-}
-
-
+// Display contacts before deletion
+console.log("Contacts before deletion:");
 addressBookManager.displayContactsFromBook("Personal");
 
+// Delete a contact
+addressBookManager.deleteContact("Personal", "John", "Doe");
 
-addressBookManager.displayContactsFromBook("Professional");
-
-// List all available address books
-//addressBookManager.listAddressBooks();
-
+// Display contacts after deletion
+console.log("Contacts after deletion:");
 addressBookManager.displayContactsFromBook("Personal");
-
-// Search for a contact and edit their details
-addressBookManager.editContact("Personal", "Sweety", "Ana", {
-    address: "789 Oak St",       // New address
-    phone: "555-555-5555",       // New phone number
-    email: "sweety.new@example.com" // New email
-});
-
-// Display contacts after editing
-addressBookManager.displayContactsFromBook("Personal");
-
