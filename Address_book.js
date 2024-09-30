@@ -70,7 +70,7 @@ class AddressBookManager {
         this.addressBooks = {};  // Object to hold multiple address books
     }
 
-    // create a new address book
+    // Create a new address book
     createAddressBook(bookName) {
         if (this.addressBooks[bookName]) {
             console.log(`Address Book '${bookName}' already exists.`);
@@ -80,7 +80,7 @@ class AddressBookManager {
         }
     }
 
-    //  add a contact 
+    // Add a contact to a specific address book
     addContactToBook(bookName, contact) {
         if (this.addressBooks[bookName]) {
             this.addressBooks[bookName].push(contact);
@@ -90,7 +90,54 @@ class AddressBookManager {
         }
     }
 
-    // display all 
+    // Find a contact by first and last name in a specific address book
+    findContactByName(bookName, firstName, lastName) {
+        if (this.addressBooks[bookName]) {
+            const contact = this.addressBooks[bookName].find(contact => contact.firstName === firstName && contact.lastName === lastName);
+            if (contact) {
+                return contact;
+            } else {
+                console.error(`Contact '${firstName} ${lastName}' not found in '${bookName}'.`);
+                return null;
+            }
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+            return null;
+        }
+    }
+
+    // Edit an existing contact's details
+    editContact(bookName, firstName, lastName, updatedDetails) {
+        const contact = this.findContactByName(bookName, firstName, lastName);
+        if (contact) {
+            try {
+                if (updatedDetails.firstName) contact.validateName(updatedDetails.firstName, "First Name");
+                if (updatedDetails.lastName) contact.validateName(updatedDetails.lastName, "Last Name");
+                if (updatedDetails.address) contact.validateAddress(updatedDetails.address, "Address");
+                if (updatedDetails.city) contact.validateAddress(updatedDetails.city, "City");
+                if (updatedDetails.state) contact.validateAddress(updatedDetails.state, "State");
+                if (updatedDetails.zip) contact.validateZip(updatedDetails.zip);
+                if (updatedDetails.phone) contact.validatePhone(updatedDetails.phone);
+                if (updatedDetails.email) contact.validateEmail(updatedDetails.email);
+
+                // Update the contact details if validation passes
+                contact.firstName = updatedDetails.firstName || contact.firstName;
+                contact.lastName = updatedDetails.lastName || contact.lastName;
+                contact.address = updatedDetails.address || contact.address;
+                contact.city = updatedDetails.city || contact.city;
+                contact.state = updatedDetails.state || contact.state;
+                contact.zip = updatedDetails.zip || contact.zip;
+                contact.phone = updatedDetails.phone || contact.phone;
+                contact.email = updatedDetails.email || contact.email;
+
+                console.log(`Contact '${firstName} ${lastName}' updated successfully in '${bookName}'.`);
+            } catch (error) {
+                console.error(`Failed to update contact: ${error.message}`);
+            }
+        }
+    }
+
+    // Display all contacts from a specific address book
     displayContactsFromBook(bookName) {
         if (this.addressBooks[bookName]) {
             console.log(`Displaying contacts from Address Book '${bookName}':`);
@@ -99,18 +146,8 @@ class AddressBookManager {
             console.error(`Address Book '${bookName}' does not exist.`);
         }
     }
-
-    // list all available address books
-    listAddressBooks() {
-        const bookNames = Object.keys(this.addressBooks);
-        if (bookNames.length === 0) {
-            console.log("No address books available.");
-        } else {
-            console.log("Available Address Books:");
-            bookNames.forEach(bookName => console.log(bookName));
-        }
-    }
 }
+
 
 let addressBookManager = new AddressBookManager();
 
@@ -143,5 +180,17 @@ addressBookManager.displayContactsFromBook("Personal");
 addressBookManager.displayContactsFromBook("Professional");
 
 // List all available address books
-addressBookManager.listAddressBooks();
+//addressBookManager.listAddressBooks();
+
+addressBookManager.displayContactsFromBook("Personal");
+
+// Search for a contact and edit their details
+addressBookManager.editContact("Personal", "Sweety", "Ana", {
+    address: "789 Oak St",       // New address
+    phone: "555-555-5555",       // New phone number
+    email: "sweety.new@example.com" // New email
+});
+
+// Display contacts after editing
+addressBookManager.displayContactsFromBook("Personal");
 
