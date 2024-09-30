@@ -92,6 +92,7 @@ class AddressBookManager {
         return false;
     }
 
+    // Add a contact to a specific address book after checking for duplicates
     addContactToBook(bookName, contact) {
         if (this.addressBooks[bookName]) {
             if (!this.isDuplicateContact(bookName, contact.firstName, contact.lastName)) {
@@ -105,15 +106,22 @@ class AddressBookManager {
         }
     }
 
-    // Sort contacts by name (first name, then last name)
-    sortContactsByName(bookName) {
+    // Sort contacts by city, state, or zip
+    sortContactsByCriterion(bookName, criterion) {
         if (this.addressBooks[bookName]) {
             this.addressBooks[bookName].sort((a, b) => {
-                const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
-                const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
-                return nameA.localeCompare(nameB);
+                if (criterion === 'city') {
+                    return a.city.localeCompare(b.city);
+                } else if (criterion === 'state') {
+                    return a.state.localeCompare(b.state);
+                } else if (criterion === 'zip') {
+                    return a.zip.localeCompare(b.zip);
+                } else {
+                    console.error("Invalid sorting criterion. Use 'city', 'state', or 'zip'.");
+                    return 0; // No sorting if invalid criterion
+                }
             });
-            console.log(`Contacts in '${bookName}' sorted by name:`);
+            console.log(`Contacts in '${bookName}' sorted by ${criterion}:`);
             this.displayContactsFromBook(bookName);
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
@@ -155,5 +163,11 @@ try {
     console.error(`Error: ${error.message}`);
 }
 
-// Sort and display contacts by name
-addressBookManager.sortContactsByName("Personal");
+// Sort and display contacts by city
+addressBookManager.sortContactsByCriterion("Personal", "city");
+
+// Sort and display contacts by state
+addressBookManager.sortContactsByCriterion("Personal", "state");
+
+// Sort and display contacts by zip
+addressBookManager.sortContactsByCriterion("Personal", "zip");
