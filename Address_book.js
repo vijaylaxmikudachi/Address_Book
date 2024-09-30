@@ -90,28 +90,15 @@ class AddressBookManager {
         }
     }
 
-    // Find a contact by first and last name in a specific address book
-    findContactByName(bookName, firstName, lastName) {
+    // Count the total number of contacts using reduce
+    countContacts(bookName) {
         if (this.addressBooks[bookName]) {
-            const contactIndex = this.addressBooks[bookName].findIndex(contact => contact.firstName === firstName && contact.lastName === lastName);
-            if (contactIndex !== -1) {
-                return contactIndex;
-            } else {
-                console.error(`Contact '${firstName} ${lastName}' not found in '${bookName}'.`);
-                return null;
-            }
+            const totalContacts = this.addressBooks[bookName].reduce((count, contact) => count + 1, 0);
+            console.log(`Total contacts in '${bookName}': ${totalContacts}`);
+            return totalContacts;
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
-            return null;
-        }
-    }
-
-    // Delete a contact by name
-    deleteContact(bookName, firstName, lastName) {
-        const contactIndex = this.findContactByName(bookName, firstName, lastName);
-        if (contactIndex !== null) {
-            this.addressBooks[bookName].splice(contactIndex, 1);
-            console.log(`Contact '${firstName} ${lastName}' deleted successfully from '${bookName}'.`);
+            return 0;
         }
     }
 
@@ -125,7 +112,6 @@ class AddressBookManager {
         }
     }
 }
-
 
 // Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
@@ -144,13 +130,8 @@ try {
     console.error(`Error: ${error.message}`);
 }
 
-// Display contacts before deletion
-console.log("Contacts before deletion:");
+// Display contacts
 addressBookManager.displayContactsFromBook("Personal");
 
-// Delete a contact
-addressBookManager.deleteContact("Personal", "John", "Doe");
-
-// Display contacts after deletion
-console.log("Contacts after deletion:");
-addressBookManager.displayContactsFromBook("Personal");
+// Count and display the total number of contacts
+addressBookManager.countContacts("Personal");
