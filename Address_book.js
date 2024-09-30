@@ -80,25 +80,26 @@ class AddressBookManager {
         }
     }
 
-    // Add a contact to a specific address book
-    addContactToBook(bookName, contact) {
+    // Check if a person already exists in the address book by first and last name
+    isDuplicateContact(bookName, firstName, lastName) {
         if (this.addressBooks[bookName]) {
-            this.addressBooks[bookName].push(contact);
-            console.log(`Contact added to '${bookName}' successfully!`);
-        } else {
-            console.error(`Address Book '${bookName}' does not exist.`);
+            const duplicate = this.addressBooks[bookName].filter(contact => contact.firstName === firstName && contact.lastName === lastName);
+            return duplicate.length > 0;
         }
+        return false;
     }
 
-    // Count the total number of contacts using reduce
-    countContacts(bookName) {
+    // Add a contact to a specific address book after checking for duplicates
+    addContactToBook(bookName, contact) {
         if (this.addressBooks[bookName]) {
-            const totalContacts = this.addressBooks[bookName].reduce((count, contact) => count + 1, 0);
-            console.log(`Total contacts in '${bookName}': ${totalContacts}`);
-            return totalContacts;
+            if (!this.isDuplicateContact(bookName, contact.firstName, contact.lastName)) {
+                this.addressBooks[bookName].push(contact);
+                console.log(`Contact '${contact.firstName} ${contact.lastName}' added to '${bookName}' successfully!`);
+            } else {
+                console.log(`Duplicate entry: Contact '${contact.firstName} ${contact.lastName}' already exists in '${bookName}'.`);
+            }
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
-            return 0;
         }
     }
 
@@ -113,6 +114,7 @@ class AddressBookManager {
     }
 }
 
+
 // Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
 
@@ -126,12 +128,13 @@ try {
 
     let contact2 = new Contact("Jane", "Doe", "456 Elm St", "CityName", "State", "67890", "098-765-4321", "jane.doe@example.com");
     addressBookManager.addContactToBook("Personal", contact2);
+
+    // Attempting to add a duplicate contact
+    let duplicateContact = new Contact("John", "Doe", "789 Oak St", "CityName", "State", "55555", "555-555-5555", "john.duplicate@example.com");
+    addressBookManager.addContactToBook("Personal", duplicateContact); // This should trigger the duplicate check
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
 // Display contacts
 addressBookManager.displayContactsFromBook("Personal");
-
-// Count and display the total number of contacts
-addressBookManager.countContacts("Personal");
