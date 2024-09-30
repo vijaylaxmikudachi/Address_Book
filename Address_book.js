@@ -64,6 +64,9 @@ class Contact {
         console.log(`Phone: ${this.phone}`);
         console.log(`Email: ${this.email}`);
     }
+    toString() {
+        return `Name: ${this.firstName} ${this.lastName}, Address: ${this.address}, City: ${this.city}, State: ${this.state}, Zip: ${this.zip}, Phone: ${this.phone}, Email: ${this.email}`;
+    }
 }
 class AddressBookManager {
     constructor() {
@@ -89,7 +92,6 @@ class AddressBookManager {
         return false;
     }
 
-    // Add a contact to a specific address book after checking for duplicates
     addContactToBook(bookName, contact) {
         if (this.addressBooks[bookName]) {
             if (!this.isDuplicateContact(bookName, contact.firstName, contact.lastName)) {
@@ -103,68 +105,32 @@ class AddressBookManager {
         }
     }
 
-    // View persons by city
-    viewPersonsByCity(bookName, city) {
+    // Sort contacts by name (first name, then last name)
+    sortContactsByName(bookName) {
         if (this.addressBooks[bookName]) {
-            const personsInCity = this.addressBooks[bookName]
-                .filter(contact => contact.city.toLowerCase() === city.toLowerCase())
-                .map(contact => `${contact.firstName} ${contact.lastName}`);
-                
-            console.log(`Persons in city '${city}':`);
-            console.log(personsInCity.join("\n"));
-            return personsInCity;
+            this.addressBooks[bookName].sort((a, b) => {
+                const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
+                const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
+                return nameA.localeCompare(nameB);
+            });
+            console.log(`Contacts in '${bookName}' sorted by name:`);
+            this.displayContactsFromBook(bookName);
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
-            return [];
         }
     }
 
-    // View persons by state
-    viewPersonsByState(bookName, state) {
+    // Display all contacts from a specific address book
+    displayContactsFromBook(bookName) {
         if (this.addressBooks[bookName]) {
-            const personsInState = this.addressBooks[bookName]
-                .filter(contact => contact.state.toLowerCase() === state.toLowerCase())
-                .map(contact => `${contact.firstName} ${contact.lastName}`);
-                
-            console.log(`Persons in state '${state}':`);
-            console.log(personsInState.join("\n"));
-            return personsInState;
+            console.log(`Displaying contacts from Address Book '${bookName}':`);
+            this.addressBooks[bookName].forEach(contact => console.log(contact.toString()));
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
-            return [];
-        }
-    }
-
-    // Use reduce to count contacts in a specific city
-    countContactsByCity(bookName, city) {
-        if (this.addressBooks[bookName]) {
-            const count = this.addressBooks[bookName]
-                .filter(contact => contact.city.toLowerCase() === city.toLowerCase())
-                .reduce((total, contact) => total + 1, 0);
-                
-            console.log(`Total contacts in city '${city}': ${count}`);
-            return count;
-        } else {
-            console.error(`Address Book '${bookName}' does not exist.`);
-            return 0;
-        }
-    }
-
-    // Use reduce to count contacts in a specific state
-    countContactsByState(bookName, state) {
-        if (this.addressBooks[bookName]) {
-            const count = this.addressBooks[bookName]
-                .filter(contact => contact.state.toLowerCase() === state.toLowerCase())
-                .reduce((total, contact) => total + 1, 0);
-                
-            console.log(`Total contacts in state '${state}': ${count}`);
-            return count;
-        } else {
-            console.error(`Address Book '${bookName}' does not exist.`);
-            return 0;
         }
     }
 }
+
 
 // Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
@@ -182,12 +148,12 @@ try {
 
     let contact3 = new Contact("Alice", "Smith", "789 Pine St", "New York", "New York", "12345", "111-222-3333", "alice.smith@example.com");
     addressBookManager.addContactToBook("Personal", contact3);
+
+    let contact4 = new Contact("Bob", "Brown", "321 Oak St", "San Francisco", "California", "54321", "222-333-4444", "bob.brown@example.com");
+    addressBookManager.addContactToBook("Personal", contact4);
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
-// Count contacts by city
-addressBookManager.countContactsByCity("Personal", "New York");
-
-// Count contacts by state
-addressBookManager.countContactsByState("Personal", "California");
+// Sort and display contacts by name
+addressBookManager.sortContactsByName("Personal");
