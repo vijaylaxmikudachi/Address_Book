@@ -65,44 +65,83 @@ class Contact {
         console.log(`Email: ${this.email}`);
     }
 }
-class AddressBook {
+class AddressBookManager {
     constructor() {
-        this.contacts = [];
+        this.addressBooks = {};  // Object to hold multiple address books
     }
 
-    // UC1: Add a new contact with error handling for validation
-    addContact(contact) {
-        try {
-            this.contacts.push(contact);
-            console.log("Contact added successfully!");
-        } catch (error) {
-            console.error(`Failed to add contact: ${error.message}`);
+    // create a new address book
+    createAddressBook(bookName) {
+        if (this.addressBooks[bookName]) {
+            console.log(`Address Book '${bookName}' already exists.`);
+        } else {
+            this.addressBooks[bookName] = [];
+            console.log(`Address Book '${bookName}' created successfully!`);
         }
     }
 
-    displayContacts() {
-        this.contacts.forEach(contact => contact.displayContact());
+    //  add a contact 
+    addContactToBook(bookName, contact) {
+        if (this.addressBooks[bookName]) {
+            this.addressBooks[bookName].push(contact);
+            console.log(`Contact added to '${bookName}' successfully!`);
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+        }
+    }
+
+    // display all 
+    displayContactsFromBook(bookName) {
+        if (this.addressBooks[bookName]) {
+            console.log(`Displaying contacts from Address Book '${bookName}':`);
+            this.addressBooks[bookName].forEach(contact => contact.displayContact());
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+        }
+    }
+
+    // list all available address books
+    listAddressBooks() {
+        const bookNames = Object.keys(this.addressBooks);
+        if (bookNames.length === 0) {
+            console.log("No address books available.");
+        } else {
+            console.log("Available Address Books:");
+            bookNames.forEach(bookName => console.log(bookName));
+        }
     }
 }
 
-// Create an AddressBook
-let myAddressBook = new AddressBook();
+let addressBookManager = new AddressBookManager();
 
-// valid contact
+addressBookManager.createAddressBook("Personal");
+addressBookManager.createAddressBook("Professional");
+
+// Add 
 try {
-    let contact1 = new Contact("Vijaylaxmi", "RKA", "4th Block", "Banglore", "Karnataka", "12345", "123-456-7890", "vijaylaxmi@gamil.com");
-    myAddressBook.addContact(contact1);
+    let contact1 = new Contact("Sweety", "Ana", "123 Main St", "CityName", "State", "12345", "123-456-7890", "sweety@example.com");
+    addressBookManager.addContactToBook("Personal", contact1);
+    
+    let contact2 = new Contact("Reshma", "Patil", "456 Elm St", "CityName", "State", "67890", "098-765-4321", "reshma@example.com");
+    addressBookManager.addContactToBook("Personal", contact2);
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
-//  invalid contact
+//Add
 try {
-    let contact2 = new Contact("oja", "Ssdj", "12 St", "NY", "St", "54321", "456-789-1234", "invalidEmail.com");
-    myAddressBook.addContact(contact2);
+    let contact3 = new Contact("Anna", "Bella", "789 Oak St", "BusinessCity", "BusinessState", "54321", "321-654-9870", "anna@work.com");
+    addressBookManager.addContactToBook("Professional", contact3);
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
-// Display 
-myAddressBook.displayContacts();
+
+addressBookManager.displayContactsFromBook("Personal");
+
+
+addressBookManager.displayContactsFromBook("Professional");
+
+// List all available address books
+addressBookManager.listAddressBooks();
+
