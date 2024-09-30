@@ -103,44 +103,68 @@ class AddressBookManager {
         }
     }
 
-    // Search for contacts by city
-    searchByCity(bookName, city) {
+    // View persons by city
+    viewPersonsByCity(bookName, city) {
         if (this.addressBooks[bookName]) {
-            const contactsInCity = this.addressBooks[bookName].filter(contact => contact.city.toLowerCase() === city.toLowerCase());
-            console.log(`Contacts in city '${city}':`);
-            contactsInCity.forEach(contact => contact.displayContact());
-            return contactsInCity;
+            const personsInCity = this.addressBooks[bookName]
+                .filter(contact => contact.city.toLowerCase() === city.toLowerCase())
+                .map(contact => `${contact.firstName} ${contact.lastName}`);
+                
+            console.log(`Persons in city '${city}':`);
+            console.log(personsInCity.join("\n"));
+            return personsInCity;
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
             return [];
         }
     }
 
-    // Search for contacts by state
-    searchByState(bookName, state) {
+    // View persons by state
+    viewPersonsByState(bookName, state) {
         if (this.addressBooks[bookName]) {
-            const contactsInState = this.addressBooks[bookName].filter(contact => contact.state.toLowerCase() === state.toLowerCase());
-            console.log(`Contacts in state '${state}':`);
-            contactsInState.forEach(contact => contact.displayContact());
-            return contactsInState;
+            const personsInState = this.addressBooks[bookName]
+                .filter(contact => contact.state.toLowerCase() === state.toLowerCase())
+                .map(contact => `${contact.firstName} ${contact.lastName}`);
+                
+            console.log(`Persons in state '${state}':`);
+            console.log(personsInState.join("\n"));
+            return personsInState;
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
             return [];
         }
     }
 
-    // Display all contacts from a specific address book
-    displayContactsFromBook(bookName) {
+    // Use reduce to count contacts in a specific city
+    countContactsByCity(bookName, city) {
         if (this.addressBooks[bookName]) {
-            console.log(`Displaying contacts from Address Book '${bookName}':`);
-            this.addressBooks[bookName].forEach(contact => contact.displayContact());
+            const count = this.addressBooks[bookName]
+                .filter(contact => contact.city.toLowerCase() === city.toLowerCase())
+                .reduce((total, contact) => total + 1, 0);
+                
+            console.log(`Total contacts in city '${city}': ${count}`);
+            return count;
         } else {
             console.error(`Address Book '${bookName}' does not exist.`);
+            return 0;
+        }
+    }
+
+    // Use reduce to count contacts in a specific state
+    countContactsByState(bookName, state) {
+        if (this.addressBooks[bookName]) {
+            const count = this.addressBooks[bookName]
+                .filter(contact => contact.state.toLowerCase() === state.toLowerCase())
+                .reduce((total, contact) => total + 1, 0);
+                
+            console.log(`Total contacts in state '${state}': ${count}`);
+            return count;
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+            return 0;
         }
     }
 }
-
-
 
 
 // Create an instance of AddressBookManager
@@ -163,8 +187,14 @@ try {
     console.error(`Error: ${error.message}`);
 }
 
-// Search contacts by city
-addressBookManager.searchByCity("Personal", "New York");
+// View persons by city
+addressBookManager.viewPersonsByCity("Personal", "New York");
 
-// Search contacts by state
-addressBookManager.searchByState("Personal", "California");
+// View persons by state
+addressBookManager.viewPersonsByState("Personal", "California");
+
+// Count contacts by city
+addressBookManager.countContactsByCity("Personal", "New York");
+
+// Count contacts by state
+addressBookManager.countContactsByState("Personal", "California");
