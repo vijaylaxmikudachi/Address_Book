@@ -166,7 +166,6 @@ class AddressBookManager {
     }
 }
 
-
 // Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
 
@@ -186,12 +185,6 @@ try {
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
-
-// View persons by city
-addressBookManager.viewPersonsByCity("Personal", "New York");
-
-// View persons by state
-addressBookManager.viewPersonsByState("Personal", "California");
 
 // Count contacts by city
 addressBookManager.countContactsByCity("Personal", "New York");
