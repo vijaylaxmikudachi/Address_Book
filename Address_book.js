@@ -103,6 +103,32 @@ class AddressBookManager {
         }
     }
 
+    // Search for contacts by city
+    searchByCity(bookName, city) {
+        if (this.addressBooks[bookName]) {
+            const contactsInCity = this.addressBooks[bookName].filter(contact => contact.city.toLowerCase() === city.toLowerCase());
+            console.log(`Contacts in city '${city}':`);
+            contactsInCity.forEach(contact => contact.displayContact());
+            return contactsInCity;
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+            return [];
+        }
+    }
+
+    // Search for contacts by state
+    searchByState(bookName, state) {
+        if (this.addressBooks[bookName]) {
+            const contactsInState = this.addressBooks[bookName].filter(contact => contact.state.toLowerCase() === state.toLowerCase());
+            console.log(`Contacts in state '${state}':`);
+            contactsInState.forEach(contact => contact.displayContact());
+            return contactsInState;
+        } else {
+            console.error(`Address Book '${bookName}' does not exist.`);
+            return [];
+        }
+    }
+
     // Display all contacts from a specific address book
     displayContactsFromBook(bookName) {
         if (this.addressBooks[bookName]) {
@@ -115,6 +141,8 @@ class AddressBookManager {
 }
 
 
+
+
 // Create an instance of AddressBookManager
 let addressBookManager = new AddressBookManager();
 
@@ -123,18 +151,20 @@ addressBookManager.createAddressBook("Personal");
 
 // Add contacts to the 'Personal' address book
 try {
-    let contact1 = new Contact("John", "Doe", "123 Main St", "CityName", "State", "12345", "123-456-7890", "john.doe@example.com");
+    let contact1 = new Contact("John", "Doe", "123 Main St", "New York", "New York", "12345", "123-456-7890", "john.doe@example.com");
     addressBookManager.addContactToBook("Personal", contact1);
 
-    let contact2 = new Contact("Jane", "Doe", "456 Elm St", "CityName", "State", "67890", "098-765-4321", "jane.doe@example.com");
+    let contact2 = new Contact("Jane", "Doe", "456 Elm St", "Los Angeles", "California", "67890", "098-765-4321", "jane.doe@example.com");
     addressBookManager.addContactToBook("Personal", contact2);
 
-    // Attempting to add a duplicate contact
-    let duplicateContact = new Contact("John", "Doe", "789 Oak St", "CityName", "State", "55555", "555-555-5555", "john.duplicate@example.com");
-    addressBookManager.addContactToBook("Personal", duplicateContact); // This should trigger the duplicate check
+    let contact3 = new Contact("Alice", "Smith", "789 Pine St", "New York", "New York", "12345", "111-222-3333", "alice.smith@example.com");
+    addressBookManager.addContactToBook("Personal", contact3);
 } catch (error) {
     console.error(`Error: ${error.message}`);
 }
 
-// Display contacts
-addressBookManager.displayContactsFromBook("Personal");
+// Search contacts by city
+addressBookManager.searchByCity("Personal", "New York");
+
+// Search contacts by state
+addressBookManager.searchByState("Personal", "California");
